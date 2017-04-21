@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import MySQLdb
 
-db = MySQLdb.connect(user='root', passwd='******', db='test1', connect_timeout=3000)
+from app.config import DB_MAPPING
+
+db = MySQLdb.connect(**DB_MAPPING)
 with db:
     dbc = db.cursor()
     db.set_character_set('utf8')
