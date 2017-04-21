@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import MySQLdb
 
-db = MySQLdb.connect(user='root', passwd='wgzwgz', db='test1', connect_timeout=3000)
+db = MySQLdb.connect(user='root', passwd='******', db='test1', connect_timeout=3000)
 with db:
     dbc = db.cursor()
     db.set_character_set('utf8')
