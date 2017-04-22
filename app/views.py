@@ -2,8 +2,8 @@
 from functools import wraps
 
 import MySQLdb as mdb
-from Flask import Flask, flash, redirect, render_template, \
-    request, session, url_for
+from flask import Flask, flash, redirect, render_template, \
+    request, session, url_for, g
 
 # config
 app = Flask(__name__)
@@ -30,9 +30,9 @@ def logout():
     flash ('已登出')
     return redirect(url_for('login'))
 
-@app.route('/login/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def login():
-    if request.method = 'POST':
+    if request.method == 'POST':
         if request.form['username'] != app.config['USERNAME'] \
             or request.form['password'] != app.config['PASSWORD']:
             error = '用户名无效或密码错误！'
@@ -42,3 +42,41 @@ def login():
             flash('欢迎回来')
             return redirect(url_for('urls'))
     return render_template('login.html')
+
+@app.route('/urls/')
+@login_required
+def urls():
+    g.db = connect_db()
+    curs = g.db.execute(
+        'select search_index, title, submission_date, path where status = 1'
+    )
+    to_read = [dict(search_index=row[0],
+                    title=row[1],
+                    submission_date=row[2],
+                    path=row[3])
+               for row in curs.fetchall()]
+
+    curs = g.db.execute(
+        'select search_index, title, submission_date, path where status = 0'
+    )
+    read = [dict(search_index=row[0],
+                    title=row[1],
+                    submission_date=row[2],
+                    path=row[3])
+               for row in curs.fetchall()]
+    g.db.close()
+    return render_template(
+        'urls.html',
+        to_read=to_read,
+        read=read,
+        form=AddUrlForm(request.form)
+    )
+
+@app.route('/add/', methods=['POST'])
+@login_required
+def add_url():
+    g.db = connect_db()
+    search_index = request.form['search_index']
+    path = request.form['path']
+    status = request.form['status']
+

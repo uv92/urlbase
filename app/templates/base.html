@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Web笔记本 － 节省重复搜索的时间</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+    <div class="page">
+        {% for message in get_flashed_messages() %}
+            <div class="flash">{{ message }}</div>
+        {% endfor %}
+    
+        {% if error %}
+            <div class="error"><strong>{{ error }}</strong></div>
+        {% endif %}
+
+        <br>
+        
+        {% block content %}
+        
+        {% endblock %}
+    </div>
+
+</body>
+</html>

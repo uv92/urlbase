@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import MySQLdb
 
-from app.config import DB_MAPPING
+from config import DB_MAPPING
 
 db = MySQLdb.connect(**DB_MAPPING)
 with db:
@@ -12,11 +12,15 @@ with db:
     dbc.execute('SET character_set_connection=utf8;')
     try:
         dbc.execute(
-            'create table urls(url_id INT not NULL auto_increment,'
+            'drop table if EXISTS urls'
+        )
+        dbc.execute(
+            'create table urls(url_id INT auto_increment,'
             'path TEXT not null,'
             'search_index TEXT not null,'
             'title VARCHAR (128),'
             'status BOOL not null,'
+            'submission_date DATE not NULL,'
             'primary key (url_id)'
             ')ENGINE=InnoDB DEFAULT CHARSET=utf8;'
         )
@@ -24,12 +28,12 @@ with db:
     # 0: read;
     # 1: to read
     dbc.execute(
-        'INSERT into urls (path, search_index, title, status)'
+        'INSERT into urls (path, search_index, title, submission_date, status)'
         'VALUES("https://www.zhihu.com/question/20336475", "Python源码推荐",'
-        ' "初学 Python，有哪些 Pythonic 的源码推荐阅读？", 1) '
+        ' "初学 Python，有哪些 Pythonic 的源码推荐阅读？", "2017-03-01", 1) '
     )
     dbc.execute(
-        'INSERT into urls (path, search_index, title, status)'
+        'INSERT into urls (path, search_index, title, submission_date, status)'
         'VALUES("http://pythonpracticeprojects.com/", "Python项目",'
-        ' "Python Practice Projects - Ideas for the Aspiring Developer", 0) '
+        ' "Python Practice Projects - Ideas for the Aspiring Developer","2017-04-14" ,0) '
     )
